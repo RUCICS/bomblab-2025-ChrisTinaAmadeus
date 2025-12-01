@@ -182,7 +182,6 @@ int phase_4(const char *line){
 所以目标字符串是 "BA"，这样我们就能得出最终结果。
 
 ### phase_5
-
 #### 答案
 ```c
 
