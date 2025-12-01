@@ -151,7 +151,7 @@ void func4_2(int n,int value,int chA,int chB,int chC,char *out){
 			out[0]=(char)chA; out[1]=(char)chB; out[2]='\0';
 			return;
 		}
-		// 右侧区间：缩减 value 并循环 (A,B,C)->(B,C,A)
+		// 右侧区间：缩减 value 并重排 (A,B,C)->(B,C,A)
 		func4_2(n-1, value - x - 1, chB, chC, chA, out);
 	} else {
 		// 左侧区间：保持 value 并重排 (A,B,C)->(C,A,B)
@@ -160,26 +160,39 @@ void func4_2(int n,int value,int chA,int chB,int chC,char *out){
 }
 
 int phase_4(const char *line){
-	char str[16];
-	int num;
-	if(sscanf(line, "%15s %d", str, &num) != 2){ explode_bomb(); return -1; }
+	// 输入必须是一个整数和一个字符串（字符串保留两位）
+	// 核心部分 ↓
 	if(num != func4_1(5)){ explode_bomb(); return -1; } // 必须是31
 	if(strlen(str) != 2){ explode_bomb(); return -1; }
 	char target[3];
-	func4_2(5, 29, 'A','C','B', target); // 29 = 0x1d
+	func4_2(5, 29, 'A','C','B', target); 
 	if(strcmp(str, target)!=0){ explode_bomb(); return -1; }
-	return 0; // 通过，合法输入: "BA 31"
+	return 0; // 通过
 }
 ```
 
 #### 思路
-程序首先用 `sscanf` 解析一行，要求提取出一个两字符字符串和一个整数，解析失败直接爆炸。第二步检查整数是否等于 `func4_1(5)`。根据递归关系 `T(1)=1, T(n)=2*T(n-1)+1` 推得闭式 `T(n)=2^n-1`，因此 `func4_1(5)=31`，若不等则爆炸；再检查字符串长度必须恰好为 2。随后调用 `func4_2(5, 29, 'A','C','B')` 生成目标两字符。`func4_2` 以 `x=func4_1(n-1)` 将区间分成左右：若 `x<value` 进入右侧（可能再缩减 `value` 并循环字符三元组 `(A,B,C)->(B,C,A)`），若 `x>=value` 进入左侧（保持 `value` 并重排 `(A,B,C)->(C,A,B)`）。具体递归展开：
+程序首先用 `sscanf` 解析一行，要求提取出一个两字符字符串和一个整数，解析失败直接爆炸。第二步检查整数是否等于 `func4_1(5)`。根据递归关系 `T(1)=1, T(n)=2*T(n-1)+1` 推得闭式 `T(n)=2^n-1`，因此 `func4_1(5)=31`，若不等则爆炸；再检查字符串长度必须恰好为 2。随后调用 `func4_2(5, 29, 'A','C','B')` 生成目标两字符。`func4_2` 以 `x=func4_1(n-1)` 将区间分成左右，具体递归过程如下：
 1. (5,29, A,C,B) ：x=15 <29 ⇒ 右侧 newValue=13, 字符→(C,B,A)
 2. (4,13, C,B,A) ：x=7 <13 ⇒ 右侧 newValue=5,  字符→(B,A,C)
 3. (3,5,  B,A,C) ：x=3 <5  ⇒ 右侧 newValue=1,  字符→(A,C,B)
 4. (2,1,  A,C,B) ：x=1 >=1 ⇒ 左侧保持 value=1, 字符→(B,A,C)
 5. (1,1,  B,A,C) 终止，输出 "BA"
-所以目标字符串是 "BA"，合法输入即 `BA 31`。任一检查不满足即触发 `explode_bomb()`。
+
+所以目标字符串是 "BA"，这样我们就能得出最终结果。
+
+### phase_5
+
+#### 答案
+```c
+
+```
+#### C语言伪代码
+```c
+
+```
+#### 思路
+
 ## 反馈/收获/感悟/总结
 
 <!-- 这一节，你可以简单描述你在这个 lab 上花费的时间/你认为的难度/你认为不合理的地方/你认为有趣的地方 -->
